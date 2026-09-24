@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ドミノの手</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yomogi&family=Zen+Kaku+Gothic+New:wght@500;700&display=swap">
+<style>
+  :root {
+    --night: #15110f;
+    --paper: #f4efe4;
+    --paper-edge: #d9cfbd;
+    --ink: #3b3530;
+    --ink-soft: #7a6f63;
+    --lamp: #ffcf8a;
+    --sage: #9fae93;
+    --terracotta: #c7765a;
+    --hand: "Yomogi", "Hiragino Maru Gothic ProN", "Zen Kaku Gothic New", sans-serif;
+    --body: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
+    color-scheme: dark;
+  }
+  [hidden] { display: none !important; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--night);
+    color: var(--paper);
+    font: 500 14px/1.6 var(--body);
+    overflow: hidden;
+  }
+  #scene {
+    position: fixed;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: none;
+    outline: none;
+    touch-action: none;
+  }
+
+  /* 手書きの文字（ワールドの位置に追従） */
+  /* 重なり順：3D < 手書きの文字 < フィルムの粒(40/41) < はじめる・ノート・設定 */
+  #labels { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 30; }
+  .float, .tag {
+    position: absolute;
+    left: 0;
+    top: 0;
+    font: 400 22px/1 var(--hand);
+    color: var(--paper);
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+    white-space: nowrap;
+    will-change: transform, opacity;
+  }
+  .float { font-size: 34px; }
+  .float.record { color: var(--lamp); font-size: 42px; }
+  .float.stamp { color: #f0b9a4; font-size: 26px; }
+  .tag { font-size: 16px; opacity: 0.85; }
+  #carry-tag { font-size: 18px; color: var(--lamp); }
+
+  /* はじめる */
+  .veil {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: grid;
+    place-items: center;
+    background: radial-gradient(ellipse at 50% 60%, rgba(40, 30, 22, 0.55), rgba(10, 8, 7, 0.92));
+    padding: 16px;
+    text-align: center;
+  }
+  #start { cursor: pointer; border: 0; color: inherit; width: 100%; }
+  #start:focus-visible .start-title { outline: 2px solid var(--lamp); outline-offset: 8px; }
+  .start-title { font: 400 44px/1.2 var(--hand); letter-spacing: 0.06em; color: var(--paper); }
+  .start-sub { font: 400 18px/1.6 var(--hand); color: var(--ink-soft); margin-top: 14px; color: #b9ad9c; }
+  .loading-mark { font: 400 26px/1 var(--hand); letter-spacing: 0.08em; color: #b9ad9c; }
+
+  /* ノート */
+  .sheet-wrap {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: grid;
+    place-items: center;
+    background: rgba(10, 8, 7, 0.45);
+    padding: 16px;
+  }
+  .sheet {
+    width: min(560px, 100%);
+    max-height: min(86vh, 760px);
+    overflow: auto;
+    background:
+      repeating-linear-gradient(to bottom, transparent 0 31px, rgba(90, 120, 150, 0.18) 31px 32px),
+      var(--paper);
+    color: var(--ink);
+    border-radius: 6px 10px 10px 6px;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55), inset 14px 0 0 -8px var(--paper-edge);
+    padding: 22px 26px 26px 34px;
+    font-family: var(--hand);
+  }
+  .sheet h2 {
+    margin: 0 0 4px;
+    font: 400 30px/1.2 var(--hand);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .stamps { font-size: 20px; color: var(--terracotta); }
+  .sheet .lead { margin: 0 0 14px; color: var(--ink-soft); font-size: 16px; }
+  #note-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  #note-list li { border-top: 1px dashed rgba(59, 53, 48, 0.25); padding-top: 12px; }
+  .up-head { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .up-name { font-size: 22px; }
+  .up-level { color: var(--ink-soft); font-size: 17px; }
+  .up-desc { margin: 2px 0 8px; font-size: 16px; color: #5a5048; }
+  .sheet button {
+    font: 400 17px/1 var(--hand);
+    color: var(--ink);
+    background: #fffaf0;
+    border: 1.5px solid rgba(59, 53, 48, 0.4);
+    border-radius: 999px;
+    padding: 8px 16px;
+    cursor: pointer;
+  }
+  .sheet button:hover:not(:disabled) { background: #fff; border-color: var(--terracotta); }
+  .sheet button:disabled { opacity: 0.45; cursor: default; }
+  .sheet button:focus-visible { outline: 2px solid var(--terracotta); outline-offset: 2px; }
+  .sheet-foot { display: flex; justify-content: flex-end; margin-top: 18px; }
+  .settings label { display: grid; grid-template-columns: 7em 1fr; align-items: center; gap: 12px; font-size: 18px; margin: 10px 0; }
+  .settings input[type="range"] { width: 100%; accent-color: var(--terracotta); }
+  .settings .keys { font-size: 16px; color: #5a5048; margin: 16px 0 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; }
+  .settings .keys dt { white-space: nowrap; }
+  .settings .keys dd { margin: 0; }
+  .danger-zone { margin-top: 20px; padding-top: 14px; border-top: 1px dashed rgba(59, 53, 48, 0.25); }
+  #wipe { color: #9b4a35; }
+
+  .fatal p { max-width: 36em; color: #d9cfbd; }
+  @media (max-width: 640px) {
+    .start-title { font-size: 34px; }
+    .sheet { padding: 18px 18px 22px 24px; }
+    .settings label { grid-template-columns: 1fr; gap: 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .float { transition: none; }
+  }
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.186.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.0/examples/jsm/",
+    "@dimforge/rapier3d-deterministic-compat": "https://cdn.jsdelivr.net/npm/@dimforge/rapier3d-deterministic-compat@0.20.0/dist/rapier.mjs"
+  }
+}
+</script>
+</head>
+<body>
+<canvas id="scene" tabindex="0" aria-label="ちゃぶ台の上でドミノを並べる"></canvas>
+
+<div id="labels" aria-hidden="true">
+  <div class="tag" id="hand-hint" hidden></div>
+  <div class="tag" id="carry-tag" hidden></div>
+</div>
+
+<button type="button" class="veil" id="start" aria-label="はじめる">
+  <span>
+    <span class="start-title">ドミノの手</span><br>
+    <span class="start-sub">クリックして はじめる（音が出ます）</span>
+  </span>
+</button>
+
+<div class="sheet-wrap" id="note" hidden role="dialog" aria-modal="true" aria-labelledby="note-title">
+  <div class="sheet">
+    <h2 id="note-title">ノート <span class="stamps">はんこ <span id="note-stamps">0</span>こ</span></h2>
+    <p class="lead">ひと休みで たまった はんこで、手を きたえる。</p>
+    <ul id="note-list"></ul>
+    <div class="sheet-foot"><button type="button" class="note-close">とじる（Esc）</button></div>
+  </div>
+</div>
+
+<div class="sheet-wrap" id="settings" hidden role="dialog" aria-modal="true" aria-labelledby="settings-title">
+  <div class="sheet settings">
+    <h2 id="settings-title">せってい</h2>
+    <label for="vol-master">ぜんたい <input type="range" id="vol-master" min="0" max="100"></label>
+    <label for="vol-music">おんがく <input type="range" id="vol-music" min="0" max="100"></label>
+    <label for="vol-sfx">こうかおん <input type="range" id="vol-sfx" min="0" max="100"></label>
+    <dl class="keys">
+      <dt>左クリック</dt><dd>つかむ・おく・ひろう（押したままだと 手が下りたまま）</dd>
+      <dt>右クリック</dt><dd>箱の上で、手の中を しまう</dd>
+      <dt>Space（ながおし）</dt><dd>ゆびを おろして おす</dd>
+      <dt>Q / E</dt><dd>むきを 15° まわす</dd>
+      <dt>Tab</dt><dd>ドミノ ⇄ しきり板</dd>
+      <dt>ホイール / WASD</dt><dd>ズーム / うごかす</dd>
+      <dt>N / M</dt><dd>ノート / 音を消す</dd>
+    </dl>
+    <div class="danger-zone"><button type="button" id="wipe">さいしょから やりなおす</button></div>
+    <div class="sheet-foot"><button type="button" id="settings-close">とじる（Esc）</button></div>
+  </div>
+</div>
+
+<div class="veil" id="loading"><div class="loading-mark">ランプを つけています…</div></div>
+<div class="veil fatal" id="fatal" hidden><div><div class="loading-mark">うまく はじめられませんでした</div><p></p></div></div>
+
+<script type="module" src="src/main.js"></script>
+<script>
+  // 読み込みに失敗したとき（通信やブラウザの制限）に、ずっと待たせない
+  setTimeout(function () {
+    if (window.__domino || window.__dominoFailed) return;
+    document.getElementById('loading').hidden = true;
+    var f = document.getElementById('fatal');
+    f.querySelector('p').textContent = '読み込みに時間がかかっています。通信環境を確認して、ページを再読み込みしてください。';
+    f.hidden = false;
+  }, 25000);
+</script>
+</body>
+</html>
