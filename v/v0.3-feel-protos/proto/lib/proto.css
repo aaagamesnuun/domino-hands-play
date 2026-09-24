@@ -1,0 +1,72 @@
+/* 試作ページ共通の見た目（本体と同じ、夜のちゃぶ台のチルな雰囲気） */
+:root {
+  --night: #15110f;
+  --paper: #f4efe4;
+  --ink-soft: #b9ad9c;
+  --lamp: #ffcf8a;
+  --hand: "Yomogi", "Hiragino Maru Gothic ProN", "Zen Kaku Gothic New", sans-serif;
+  color-scheme: dark;
+}
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--night);
+  color: var(--paper);
+  font: 400 15px/1.5 var(--hand);
+  overflow: hidden;
+}
+#scene {
+  position: fixed;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: none;
+  outline: none;
+  touch-action: none;
+}
+/* 重なり順：3D < 文字(30) < フィルムの粒(40/41) < はじめる(60) */
+.p-head, .p-keys, .p-status, #p-labels { position: fixed; z-index: 30; pointer-events: none; text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7); }
+.p-head { top: calc(14px + env(safe-area-inset-top, 0px)); left: 16px; right: 16px; max-width: 34em; }
+.p-title { font-size: 26px; letter-spacing: 0.04em; }
+.p-desc { font-size: 15px; color: var(--ink-soft); margin-top: 2px; }
+.p-keys {
+  right: 16px;
+  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 1px 12px;
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.p-keys dt { text-align: right; color: var(--paper); opacity: 0.8; }
+.p-keys dd { margin: 0; }
+.p-status { left: 16px; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); font-size: 18px; color: var(--lamp); }
+#p-labels { inset: 0; overflow: hidden; }
+.p-float { position: absolute; left: 0; top: 0; font-size: 34px; white-space: nowrap; will-change: transform, opacity; }
+.p-float.big { font-size: 46px; color: var(--lamp); }
+.p-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  border: 0;
+  width: 100%;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+  background: radial-gradient(ellipse at 50% 60%, rgba(40, 30, 22, 0.55), rgba(10, 8, 7, 0.92));
+  padding: 16px;
+  text-align: center;
+}
+.p-veil:focus-visible .p-veil-title { outline: 2px solid var(--lamp); outline-offset: 8px; }
+.p-veil-title { font-size: 40px; letter-spacing: 0.06em; }
+.p-veil-sub { font-size: 18px; color: var(--ink-soft); }
+.p-loading { position: fixed; inset: 0; z-index: 61; display: grid; place-items: center; background: var(--night); font-size: 24px; color: var(--ink-soft); }
+@media (max-width: 640px) {
+  .p-keys { display: none; }
+  .p-veil-title { font-size: 30px; }
+}

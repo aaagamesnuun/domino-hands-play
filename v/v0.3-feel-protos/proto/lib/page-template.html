@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>__TITLE__</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yomogi&family=Zen+Kaku+Gothic+New:wght@500;700&display=swap">
+<link rel="stylesheet" href="../lib/proto.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.186.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.0/examples/jsm/",
+    "@dimforge/rapier3d-deterministic-compat": "https://cdn.jsdelivr.net/npm/@dimforge/rapier3d-deterministic-compat@0.20.0/dist/rapier.mjs"
+  }
+}
+</script>
+</head>
+<body>
+<canvas id="scene" tabindex="0" aria-label="ちゃぶ台の上でドミノを並べる"></canvas>
+<div class="p-loading" id="p-loading">ランプを つけています…</div>
+<script type="module" src="./main.js"></script>
+</body>
+</html>

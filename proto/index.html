@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>置く気持ちよさの試作</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yomogi&family=Zen+Kaku+Gothic+New:wght@500;700&display=swap">
+<style>
+  :root {
+    --night: #15110f;
+    --paper: #f4efe4;
+    --ink: #3b3530;
+    --ink-soft: #7a6f63;
+    --lamp: #ffcf8a;
+    --terracotta: #c7765a;
+    --hand: "Yomogi", "Hiragino Maru Gothic ProN", "Zen Kaku Gothic New", sans-serif;
+    --body: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
+    color-scheme: dark;
+  }
+  html, body { min-height: 100%; }
+  body {
+    margin: 0;
+    padding: 40px 16px 56px;
+    background: radial-gradient(ellipse at 50% 0%, #2a2018 0%, var(--night) 60%);
+    color: var(--paper);
+    font: 500 15px/1.7 var(--body);
+  }
+  main { max-width: 760px; margin: 0 auto; }
+  h1 { font: 400 38px/1.2 var(--hand); letter-spacing: 0.05em; margin: 0 0 6px; text-wrap: balance; }
+  .lead { color: #c9bda9; margin: 0 0 28px; max-width: 38em; }
+  ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+  li a {
+    display: grid;
+    grid-template-columns: 3.2em 1fr;
+    gap: 4px 16px;
+    padding: 18px 20px;
+    border-radius: 8px;
+    background: var(--paper);
+    color: var(--ink);
+    text-decoration: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    transition: transform 0.15s;
+  }
+  li a:hover { transform: translateY(-2px); }
+  li a:focus-visible { outline: 3px solid var(--lamp); outline-offset: 3px; }
+  .num { grid-row: span 2; font: 400 40px/1 var(--hand); color: var(--terracotta); align-self: center; text-align: center; }
+  .name { font: 400 24px/1.3 var(--hand); }
+  .what { color: #5a5048; }
+  .foot { margin-top: 28px; color: #9d917f; font-size: 14px; }
+  .foot a { color: var(--lamp); }
+  @media (max-width: 520px) {
+    h1 { font-size: 30px; }
+    li a { grid-template-columns: 1fr; }
+    .num { grid-row: auto; text-align: left; font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>置く気持ちよさの試作</h1>
+  <p class="lead">「ドミノを置くこと」そのものを気持ちよくするための、3つの答えです。どれも坂や段差、最初から置いてある物、小・中・大のドミノがあります。触り比べて、しっくりくるものを教えてください。マウスとキーボードで遊びます。</p>
+  <ol>
+    <li><a href="feel/"><span class="num">1</span><span class="name">手触り＋なぞり置き</span><span class="what">押したまま動かすと、ドミノがカタカタと並んでいく。とぎれたコースをつないで、鐘を鳴らす。</span></a></li>
+    <li><a href="music/"><span class="num">2</span><span class="name">ドミノが音符</span><span class="what">置く場所で音が決まる。倒すと、自分で並べたメロディが流れる。</span></a></li>
+    <li><a href="art/"><span class="num">3</span><span class="name">倒すと絵が出る</span><span class="what">色のついたドミノを下絵に合わせて並べる。倒した瞬間に、1枚の絵が現れる。</span></a></li>
+  </ol>
+  <p class="foot">土台の確認用のページ：<a href="base/">坂と台と3つの大きさ</a>　／　今の本編：<a href="../">ドミノの手</a></p>
+</main>
+</body>
+</html>
